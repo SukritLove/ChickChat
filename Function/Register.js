@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // If all validation passes, you can send the data to PHP using AJAX
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "register.php", true);
+        xhr.open("POST", "../php/Register_User.php", true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {

@@ -4,25 +4,26 @@ try {
     $host = 'localhost';
     $port = 3306;
     $dbname = 'ChickChatData';
-    $username = 'Sukrit';
-    $password = 'admin435123';
+    $db_username = 'Sukrit'; // Use a different variable name for the database username
+    $db_password = 'admin435123'; // Use a different variable name for the database password
 
+    // User registration data from POST request
     $username = $_POST['username'];
     $email = $_POST['email'];
-    $password = $_POST['password'];
+    $user_password = $_POST['password']; // Use a different variable name for the user password
 
-    // Create a new PDO instance
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);
+    // Create a new PDO instance for database connection
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $db_username, $db_password);
 
     // Set the PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Hash the user's password before inserting it into the database (use a strong hashing algorithm like bcrypt)
+    $hashedPassword = password_hash($user_password, PASSWORD_BCRYPT);
+
     // Insert user data into the database
     $query = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
     $stmt = $pdo->prepare($query);
-
-    // Hash the password before inserting it into the database (use a strong hashing algorithm like bcrypt)
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
     // Bind parameters
     $stmt->bindParam(':username', $username, PDO::PARAM_STR);
@@ -40,3 +41,4 @@ try {
     // Handle database connection errors
     echo "Database error: " . $e->getMessage();
 }
+?>
