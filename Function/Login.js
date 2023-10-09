@@ -44,8 +44,12 @@ function setNormal(inputStyle) {
 
 // Attach the validateInput function to a button click event
 document.addEventListener("DOMContentLoaded", function () {
-  var button = document.getElementById("login");
-  button.addEventListener("click", validateInput);
+  var loginBTN = document.getElementById("login"),
+      registerBTN = document.getElementById("register");
+  loginBTN.addEventListener("click", validateInput);
+  registerBTN.addEventListener("click", ()=>{
+    window.location.href = "../Pages/RegisterPage.html"
+  });
 
   var username = document.getElementById("username");
 
