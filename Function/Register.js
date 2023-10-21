@@ -16,39 +16,30 @@ async function callPhpMethod(method, column, data) {
       body: `action=${method}&column=${column}&data=${data}`,
     });
     const result = await response.text();
-
+    console.log("PHP Return : " + result);
     if (result === "false" || result === "true") {
-      console.log("Done");
+      return JSON.parse(result);
     } else {
       console.error("Unexpected response:" + result);
     }
-
-    console.log("Use PHP result : " + result);
-    return result;
   } catch (error) {
     console.error("Error:", error);
     return null;
   }
 }
 
-async function checkUserName(func) {
-  const username = document.getElementById("username").value;
-  console.log("Check User");
-  if (func === 1) {
-    if (username === "") {
-      return false;
-    }
-  } else {
-    const result = await callPhpMethod("Checker", "username", username);
-    return result;
-  }
+async function checkDataValid(column, data) {
+  console.log("CheckDataValid");
+  const result = await callPhpMethod("Checker", column, data);
+  return result;
 }
 
 function validateData() {
   // Retrieve form values
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const rePassword = document.getElementById("re-pass").value;
+  const username = document.getElementById("username").value,
+    email = document.getElementById("email").value,
+    password = document.getElementById("password").value,
+    rePassword = document.getElementById("re-pass").value;
 
   var errorSet = [
     document.getElementById("erroruser"),
@@ -57,32 +48,64 @@ function validateData() {
     document.getElementById("errorrepass"),
   ];
 
-  checkUserName(1).then((isUsernameValid) => {
-    errorSet[0].style.visibility = isUsernameValid ? "hidden" : "visible";
-    errorSet[0].textContent = "Username missing! Let's fix that.";
-    return;
+  checkDataValid("username", username).then((isUsernameValid) => {
+    console.log(isUsernameValid);
+    if (username === "") {
+      errorSet[0].style.visibility = "visible";
+      errorSet[0].textContent = "Username missing! Let's fix that.";
+    } else if (isUsernameValid) {
+      errorSet[0].style.visibility = "visible";
+      errorSet[0].textContent = "This Username is already in use!";
+    } else {
+      setNormal("u");
+    }
   });
-  checkUserName(2).then((isUsernameValid) => {
-    errorSet[0].style.visibility = isUsernameValid ? "hidden" : "visible";
-    errorSet[0].textContent = "This Username is already been use!";
-    return;
+
+  checkDataValid("email", email).then((isUsernameValid) => {
+    console.log(isUsernameValid);
+    if (email === "") {
+      errorSet[1].style.visibility = "visible";
+      errorSet[1].textContent = "Email missing! Let's fix that.";
+    } else if (isUsernameValid) {
+      errorSet[1].style.visibility = "visible";
+      errorSet[1].textContent = "This Email is already in use!";
+    } else {
+      setNormal("e");
+    }
   });
-  // You can perform client-side validation here
 
-  // if (email === "") {
-  //   alert("Email is required.");
-  //   return;
-  // }
+  if (password === "") {
+    alert("Password is required.");
+    return;
+  }
+  
 
-  // if (password === "") {
-  //   alert("Password is required.");
-  //   return;
-  // }
+  if (password !== rePassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+}
 
-  // if (password !== rePassword) {
-  //   alert("Passwords do not match.");
-  //   return;
-  // }
+function setNormal(func) {
+  var errorSet = [
+    document.getElementById("erroruser"),
+    document.getElementById("erroremail"),
+    document.getElementById("errorpass"),
+    document.getElementById("errorrepass"),
+  ];
+  switch (func) {
+    case "u": {
+      errorSet[0].style.visibility = "hidden";
+      break;
+    }
+    case "e": {
+      errorSet[1].style.visibility = "hidden";
+      break;
+    }
+    default: {
+      break;
+    }
+  }
 }
 
 function SendPHP() {

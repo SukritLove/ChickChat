@@ -31,7 +31,7 @@ function Checker($column, $data)
     $query = "SELECT * FROM $table WHERE $column = '$data'";
     $result = $conn->query($query);
 
-    echo $result->num_rows > 0 ? "false" : "true";
+    echo $result->num_rows > 0 ? "true" : "false";
 }
 
 function method2($data)
@@ -48,7 +48,5 @@ if (isset($_POST['action'])) {
 
     if ($action === 'Checker') {
         echo Checker($column, $data);
-    } elseif ($action === 'method2') {
-        echo method2($data);
     }
 }
