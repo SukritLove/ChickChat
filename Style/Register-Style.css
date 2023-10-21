@@ -77,18 +77,19 @@ input:focus::placeholder {
   color: var(--placeholder-color, black);
 }
 
-span-1,
-span-2,
-span-3 {
+
+#erroruser,
+#erroremail,
+#errorpass {
   margin-bottom: 10px;
 }
-span-4 {
+#errorrepass {
   margin-bottom: 20px;
 }
-span-1,
-span-2,
-span-3,
-span-4 {
+#erroruser,
+#erroremail,
+#errorpass,
+#errorrepass {
   margin-top: 5px;
   visibility: hidden;
 }
@@ -121,9 +122,9 @@ header-2,
 input,
 input::placeholder,
 .register,
-span-1,
-span-2,
-span-3,
-span-4 {
+#erroruser,
+#erroremail,
+#errorpass,
+#errorrepass {
   transition-duration: 0.4s;
 }
