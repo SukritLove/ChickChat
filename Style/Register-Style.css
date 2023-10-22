@@ -17,6 +17,7 @@ body {
   height: 100%;
   min-height: 100vh;
   max-width: 1440px;
+  min-width: 480px;
   background-image: url("../Art/background.svg");
 }
 
@@ -51,7 +52,10 @@ footer {
   margin: 0px;
 }
 
-input {
+.username,
+.email,
+.password,
+.re-pass {
   width: 250px;
   height: 30px;
   background-color: white;
@@ -63,20 +67,31 @@ input {
   outline: none;
 }
 
-input:focus,
-input:hover {
+.username:focus,
+.username:hover,
+.email:focus,
+.email:hover,
+.password:focus,
+.password:hover,
+.re-pass:focus,
+.re-pass:hover {
   background-color: var(--yellow);
 }
-input:focus {
+.username:focus,
+.email:focus,
+.password:focus,
+.re-pass:focus {
   border: 2px solid var(--darkyellow);
 }
 
-input:focus::placeholder {
+.username:focus::placeholder,
+.email:focus::placeholder,
+.password:focus::placeholder,
+.re-pass:focus::placeholder {
   font-family: may;
   font-weight: 600;
   color: var(--placeholder-color, black);
 }
-
 
 #erroruser,
 #erroremail,
@@ -90,11 +105,18 @@ input:focus::placeholder {
 #erroremail,
 #errorpass,
 #errorrepass {
-  margin-top: 5px;
+  color: #cf1919;
+  font-family: may;
+  font-weight: 600;
+  font-size: 12px;
+  margin: 5px 5px 5px 5px;
   visibility: hidden;
 }
 
-input::placeholder {
+.username::placeholder,
+.email::placeholder,
+.password::placeholder,
+.re-pass::placeholder {
   font-family: may;
   font-weight: 600;
   color: var(--placeholder-color, gray);
@@ -119,12 +141,41 @@ input::placeholder {
 .block,
 header-1,
 header-2,
-input,
-input::placeholder,
+.username,
+.username::placeholder,
+.email,
+.email::placeholder,
+.password,
+.password::placeholder,
+.re-pass,
+.re-pass::placeholder,
 .register,
 #erroruser,
 #erroremail,
 #errorpass,
 #errorrepass {
   transition-duration: 0.4s;
+}
+
+/* Add the following styles for the password rules box */
+.password-rules {
+  position: absolute;
+  top: 56%; /* Adjust the top position as needed */
+  left: 62%; /* Adjust the left position as needed */
+  width: 270px; /* Set a fixed width or adjust as needed */
+  background-color: #f8f8f8;
+  border: 2px solid #ccc;
+  display: none;
+  padding: 10px;
+}
+
+.password-rules ul {
+  list-style: circle;
+  list-style-position: inside;
+  padding: 0;
+}
+
+.password-rules li {
+  margin: 5px 0;
+  color: var(--wrong-Text);
 }

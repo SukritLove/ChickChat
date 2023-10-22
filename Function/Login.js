@@ -33,7 +33,7 @@ function setStyle(inputStyle, isValid) {
 function setError(inputStyle) {
   inputStyle.style.backgroundColor = "#ff9999";
   inputStyle.style.borderColor = "#cf1919";
-  inputStyle.style.setProperty("--placeholder-color", "#ba0606");
+  inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
 }
 
 function setNormal(inputStyle) {
