@@ -1,5 +1,4 @@
 <?php
-
 $host = 'localhost';
 $port = 3306;
 $dbname = 'ChickChatData';
@@ -19,7 +18,6 @@ function connectToDatabase()
     return $conn;
 }
 
-
 function Checker($column, $data)
 {
     $conn = connectToDatabase();
@@ -34,21 +32,47 @@ function Checker($column, $data)
     echo $result->num_rows > 0 ? "true" : "false";
 }
 
-
-
-function method2($data)
+function insertData($username, $email, $password)
 {
-    // Your PHP code for method 2
-    return "Method 2 called with data: " . $data;
+    $conn = connectToDatabase();
+    $table = 'users';
+    $username = $conn->real_escape_string($username);
+    $email = $conn->real_escape_string($email);
+
+    // Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    $query = "INSERT INTO $table (username, email, password) VALUES ('$username', '$email', '$hashedPassword')";
+
+    if ($conn->query($query) === TRUE) {
+        echo "Data inserted successfully";
+    } else {
+        echo "Error: " . $query . "<br>" . $conn->error;
+    }
+
+    $conn->close();
 }
 
 // Check which method to call based on the "action" parameter
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
-    $column = $_POST['column'];
-    $data = $_POST['data'];
 
     if ($action === 'Checker') {
-        echo Checker($column, $data);
+        if (isset($_POST['column']) && isset($_POST['data'])) {
+            $column = $_POST['column'];
+            $data = $_POST['data'];
+            Checker($column, $data);
+        } else {
+            echo "Missing column or data in POST request";
+        }
+    } elseif ($action === 'InsertData') {
+        if (isset($_POST['username']) && isset($_POST['email']) && isset($_POST['password'])) {
+            $username = $_POST['username'];
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            insertData($username, $email, $password);
+        } else {
+            echo "Missing username, email, or password in POST request";
+        }
     }
 }

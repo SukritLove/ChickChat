@@ -4,20 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
     validateData();
   });
 
-  // Get a reference to the password input field and the password rules box
-  const passwordInput = document.getElementById("password");
-  const passwordRules = document.getElementById("password-rules");
+  const passwordInput = document.getElementById("password"),
+    passwordRe = document.getElementById("re-pass"),
+    passwordRules = document.getElementById("password-rules");
 
   passwordInput.addEventListener("focus", () => {
     passwordRules.style.display = "block";
   });
-  // Add a blur event listener to hide the password rules box when focus is lost
+
   passwordInput.addEventListener("blur", () => {
     if (passwordInput.value.length === 0) {
       passwordRules.style.display = "none";
     }
   });
-
+  
   passwordInput.addEventListener("input", () => {
     if (passwordInput.value.length === 0) {
       CheckPasswordRules(passwordInput.value);
@@ -26,28 +26,30 @@ document.addEventListener("DOMContentLoaded", function () {
       CheckPasswordRules(passwordInput.value);
     }
   });
+
+  const shButton1 = document.getElementById("shBtn1"),
+    shButton2 = document.getElementById("shBtn2");
+  const icon1 = document.getElementById("icon1"),
+    icon2 = document.getElementById("icon2");
+
+  shButton1.addEventListener("click", function () {
+    showPasswordEye(icon1, passwordInput);
+  });
+
+  shButton2.addEventListener("click", function () {
+    showPasswordEye(icon2, passwordRe);
+  });
 });
 
-async function callPhpMethod(method, column, data) {
-  console.log("Use PHP");
-  try {
-    const response = await fetch("../php/Register_User.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `action=${method}&column=${column}&data=${data}`,
-    });
-    const result = await response.text();
-    console.log("PHP Return : " + result);
-    if (result === "false" || result === "true") {
-      return JSON.parse(result);
-    } else {
-      console.error("Unexpected response:" + result);
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
+function showPasswordEye(icon, passField) {
+  if (icon.getAttribute("src").includes("../Art/EyeC.svg")) {
+    icon.setAttribute("src", "../Art/EyeO.svg");
+    icon.setAttribute("alt", "Icon 1");
+    passField.setAttribute("type", "text");
+  } else {
+    icon.setAttribute("src", "../Art/EyeC.svg");
+    icon.setAttribute("alt", "Icon 2");
+    passField.setAttribute("type", "password");
   }
 }
 
@@ -108,6 +110,8 @@ function validateData() {
   checkUsernameAndEmail("email", email, errorSet[1], "e");
   CheckPassword(password, errorSet[2]);
   CheckRePassword(password, rePassword, errorSet[3]);
+
+  SendPHP(username, email, password);
 }
 
 function CheckRePassword(pass, repass, repassErr) {
@@ -255,17 +259,46 @@ function setNormal(func) {
   }
 }
 
-function SendPHP() {
+function SendPHP(username, email, password) {
+  // Create a FormData object to send the data
+  const formData = new FormData();
+  formData.append("action", "InsertData");
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("password", password);
+
   // If all validation passes, you can send the data to PHP using AJAX
   const xhr = new XMLHttpRequest();
   xhr.open("POST", "../php/Register_User.php", true);
-  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       // Handle the response from PHP
       alert(xhr.responseText);
     }
   };
-  const data = `username=${username}&email=${email}&password=${password}`;
-  xhr.send(data);
+
+  xhr.send(formData);
+}
+
+async function callPhpMethod(method, column, data) {
+  console.log("Use PHP");
+  try {
+    const response = await fetch("../php/Register_User.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `action=${method}&column=${column}&data=${data}`,
+    });
+    const result = await response.text();
+    console.log("PHP Return : " + result);
+    if (result === "false" || result === "true") {
+      return JSON.parse(result);
+    } else {
+      console.error("Unexpected response:" + result);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  }
 }

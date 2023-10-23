@@ -27,9 +27,9 @@ body {
   align-items: center;
   background-color: var(--purpleblue);
   background-image: url("../Art/backDrop.svg");
-  width: 350px;
+  width: 450px;
   min-width: 250px;
-  max-width: 350px;
+  max-width: 450px;
   max-height: 500px;
   border-radius: 20px;
   border: 5px solid;
@@ -168,7 +168,6 @@ header-2,
   border-radius: 12px;
   display: none;
   padding: 10px;
-
 }
 
 .password-rules ul {
@@ -182,8 +181,25 @@ header-2,
   color: var(--wrong-Text);
 }
 
-span{
+span-1 {
   background-color: var(--wrong-Text);
   border-radius: 5px;
   padding: 2px;
+}
+
+.passInput {
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+}
+
+#shBtn1,
+#shBtn2 {
+  position: relative;
+  border-radius: 7px;
+  justify-content: center;
+  margin-left: -45px;
+  border: 0px;
+  background-color: transparent;
+  transition: 1s;
 }
