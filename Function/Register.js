@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
     validateData();
   });
 
-  const passwordInput = document.getElementById("password"),
+  const username = document.getElementById("username"),
+    email = document.getElementById("email"),
+    passwordInput = document.getElementById("password"),
     passwordRe = document.getElementById("re-pass"),
     passwordRules = document.getElementById("password-rules");
-
   passwordInput.addEventListener("focus", () => {
     passwordRules.style.display = "block";
   });
@@ -17,13 +18,37 @@ document.addEventListener("DOMContentLoaded", function () {
       passwordRules.style.display = "none";
     }
   });
-  
+
+  username.addEventListener("input", () => {
+    if (username.value.length === 0) {
+      setErrorInput("u");
+    } else {
+      setNormal("u");
+    }
+  });
+  email.addEventListener("input", () => {
+    if (email.value.length === 0) {
+      setErrorInput("e");
+    } else {
+      setNormal("e");
+    }
+  });
+
   passwordInput.addEventListener("input", () => {
     if (passwordInput.value.length === 0) {
       CheckPasswordRules(passwordInput.value);
+      setErrorInput("p");
     } else {
       passwordRules.style.display = "block";
       CheckPasswordRules(passwordInput.value);
+      setNormal("p");
+    }
+  });
+  passwordRe.addEventListener("input", () => {
+    if (passwordRe.value.length === 0) {
+      setErrorInput("rp");
+    } else {
+      setNormal("rp");
     }
   });
 
@@ -60,32 +85,16 @@ async function checkDataValid(column, data) {
 }
 
 function checkUsernameAndEmail(column, data, errorSet, func) {
-  let msg = ["", ""];
-  switch (func) {
-    case "u": {
-      msg[0] = "Username missing! Let's fix that.";
-      msg[1] = "This Username is already in use!";
-      break;
-    }
-    case "e": {
-      msg[0] = "Email missing! Let's fix that.";
-      msg[1] = "This Email is already in use!";
-      break;
-    }
-    default: {
-      console.log("Invalid function in [checkUsernameAndEmail]");
-      break;
-    }
-  }
-
   checkDataValid(column, data).then((isDataValid) => {
     console.log(isDataValid);
     if (data === "") {
       errorSet.style.visibility = "visible";
-      errorSet.textContent = msg[0];
+      errorSet.textContent =
+        column === "username" ? errMsg(0, 0) : errMsg(1, 0);
     } else if (isDataValid) {
       errorSet.style.visibility = "visible";
-      errorSet.textContent = msg[1];
+      errorSet.textContent =
+        column === "username" ? errMsg(0, 1) : errMsg(1, 1);
     } else {
       setNormal(func);
     }
@@ -117,10 +126,10 @@ function validateData() {
 function CheckRePassword(pass, repass, repassErr) {
   if (repass === "") {
     repassErr.style.visibility = "visible";
-    repassErr.textContent = "Re-enter Password missing! Let's fix that.";
+    repassErr.textContent = errMsg(3, 0);
   } else if (repass !== pass) {
     repassErr.style.visibility = "visible";
-    repassErr.textContent = "Passwords don't match. Let's fix it!";
+    repassErr.textContent = errMsg(3, 1);
   } else {
     setNormal("rp");
   }
@@ -129,19 +138,19 @@ function CheckRePassword(pass, repass, repassErr) {
 function CheckPassword(pass, passErr) {
   if (pass === "") {
     passErr.style.visibility = "visible";
-    passErr.textContent = "Password missing! Let's fix that.";
+    passErr.textContent = errMsg(2, 0);
   } else if (String(pass).length < 8) {
     passErr.style.visibility = "visible";
-    passErr.textContent = "Password must be more than 8 letters.";
+    passErr.textContent = errMsg(2, 1);
   } else if (!pass.match(setOfPassValidate("u"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = "Password must contain uppercase letter";
+    passErr.textContent = errMsg(2, 2);
   } else if (!pass.match(setOfPassValidate("l"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = "Password must contain lowercase letter";
+    passErr.textContent = errMsg(2, 3);
   } else if (!pass.match(setOfPassValidate("n"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = "Password must contain number";
+    passErr.textContent = errMsg(2, 4);
   } else {
     setNormal("p");
   }
@@ -226,6 +235,61 @@ function setRuleTrueOrFalse(func, rule, msg) {
       break;
     }
   }
+}
+
+function errMsg(index1, index2) {
+  let msg = [
+    ["Username missing! Let's fix that.", "This Username is already in use!"],
+    ["Email missing! Let's fix that.", "This Email is already in use!"],
+    [
+      "Password missing! Let's fix that.",
+      "Password must be more than 8 letters.",
+      "Password must contain uppercase letter",
+      "Password must contain lowercase letter",
+      "Password must contain number",
+    ],
+    [
+      "Re-enter Password missing! Let's fix that.",
+      "Passwords don't match. Let's fix it!",
+    ],
+  ];
+  return msg[index1][index2];
+}
+
+function setErrorInput(func) {
+  var errorSet = [
+    document.getElementById("erroruser"),
+    document.getElementById("erroremail"),
+    document.getElementById("errorpass"),
+    document.getElementById("errorrepass"),
+  ];
+  switch (func) {
+    case "u": {
+      setError(errorSet[0], errMsg(0, 0));
+      break;
+    }
+    case "e": {
+      setError(errorSet[1], errMsg(1, 0));
+      break;
+    }
+    case "p": {
+      setError(errorSet[2], errMsg(2, 0));
+      break;
+    }
+    case "rp": {
+      setError(errorSet[3], errMsg(3, 0));
+      break;
+    }
+    default: {
+      console.log("Invalid function in [setErrInput]");
+      break;
+    }
+  }
+}
+
+function setError(err, msg) {
+  err.style.visibility = "visible";
+  err.textContent = msg;
 }
 
 function setNormal(func) {
