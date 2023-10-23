@@ -105,7 +105,7 @@ footer {
 #erroremail,
 #errorpass,
 #errorrepass {
-  color: #cf1919;
+  color: white;
   font-family: may;
   font-weight: 600;
   font-size: 12px;
@@ -165,8 +165,10 @@ header-2,
   width: 270px; /* Set a fixed width or adjust as needed */
   background-color: #f8f8f8;
   border: 2px solid #ccc;
+  border-radius: 12px;
   display: none;
   padding: 10px;
+
 }
 
 .password-rules ul {
@@ -178,4 +180,10 @@ header-2,
 .password-rules li {
   margin: 5px 0;
   color: var(--wrong-Text);
+}
+
+span{
+  background-color: var(--wrong-Text);
+  border-radius: 5px;
+  padding: 2px;
 }

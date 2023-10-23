@@ -34,6 +34,8 @@ function Checker($column, $data)
     echo $result->num_rows > 0 ? "true" : "false";
 }
 
+
+
 function method2($data)
 {
     // Your PHP code for method 2
