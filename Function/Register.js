@@ -21,34 +21,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
   username.addEventListener("input", () => {
     if (username.value.length === 0) {
-      setErrorInput("u");
+      setErrorInput("u", username);
     } else {
-      setNormal("u");
+      setNormalSwitch("u", username);
     }
   });
   email.addEventListener("input", () => {
     if (email.value.length === 0) {
-      setErrorInput("e");
+      setErrorInput("e", email);
+    } else if (!checkEmailFormat(email.value)) {
+      setErrorInput("ef", email);
     } else {
-      setNormal("e");
+      setNormalSwitch("e", email);
     }
   });
 
   passwordInput.addEventListener("input", () => {
     if (passwordInput.value.length === 0) {
       CheckPasswordRules(passwordInput.value);
-      setErrorInput("p");
+      setErrorInput("p", passwordInput);
     } else {
       passwordRules.style.display = "block";
       CheckPasswordRules(passwordInput.value);
-      setNormal("p");
+      setNormalSwitch("p", passwordInput);
     }
   });
   passwordRe.addEventListener("input", () => {
     if (passwordRe.value.length === 0) {
-      setErrorInput("rp");
+      setErrorInput("rp", passwordRe);
     } else {
-      setNormal("rp");
+      setNormalSwitch("rp", passwordRe);
     }
   });
 
@@ -84,29 +86,42 @@ async function checkDataValid(column, data) {
   return result;
 }
 
-function checkUsernameAndEmail(column, data, errorSet, func) {
-  checkDataValid(column, data).then((isDataValid) => {
-    console.log(isDataValid);
-    if (data === "") {
-      errorSet.style.visibility = "visible";
-      errorSet.textContent =
-        column === "username" ? errMsg(0, 0) : errMsg(1, 0);
-    } else if (isDataValid) {
-      errorSet.style.visibility = "visible";
-      errorSet.textContent =
-        column === "username" ? errMsg(0, 1) : errMsg(1, 1);
-    } else {
-      setNormal(func);
-    }
-  });
+function checkEmailFormat(email) {
+  let domainName = ["outlook.com", "gmail.com", "hotmail.com"];
+  return domainName.includes(String(email).toLowerCase().split("@")[1]);
 }
 
-function validateData() {
+async function checkUsernameAndEmail(column, dataField, errorSet, func) {
+  let Check = true,
+    data = dataField.value;
+  const isDataValid = await checkDataValid(column, data);
+  if (data === "") {
+    errorSet.style.visibility = "visible";
+    errorSet.textContent = column === "username" ? errMsg(0, 0) : errMsg(1, 0);
+    Check = false;
+  } else if (isDataValid) {
+    errorSet.style.visibility = "visible";
+    errorSet.textContent = column === "username" ? errMsg(0, 1) : errMsg(1, 1);
+    Check = false;
+  } else if (column === "email") {
+    Check = checkEmailFormat(email.value);
+  }
+
+  if (Check) {
+    setNormalSwitch(func, dataField);
+  } else {
+    setErrorInput(func, dataField);
+  }
+
+  return Check;
+}
+
+async function validateData() {
   // Retrieve form values
-  const username = document.getElementById("username").value,
-    email = document.getElementById("email").value,
-    password = document.getElementById("password").value,
-    rePassword = document.getElementById("re-pass").value;
+  const username = document.getElementById("username"),
+    email = document.getElementById("email"),
+    password = document.getElementById("password"),
+    rePassword = document.getElementById("re-pass");
 
   const errorSet = [
     document.getElementById("erroruser"),
@@ -115,45 +130,77 @@ function validateData() {
     document.getElementById("errorrepass"),
   ];
 
-  checkUsernameAndEmail("username", username, errorSet[0], "u");
-  checkUsernameAndEmail("email", email, errorSet[1], "e");
-  CheckPassword(password, errorSet[2]);
-  CheckRePassword(password, rePassword, errorSet[3]);
+  let AllDataTrue = [
+    await checkUsernameAndEmail("username", username, errorSet[0], "u"),
+    await checkUsernameAndEmail("email", email, errorSet[1], "e"),
+    CheckPassword(password, errorSet[2]),
+    CheckRePassword(password, rePassword, errorSet[3]),
+  ];
 
-  SendPHP(username, email, password);
+  if (AllDataTrue[0] && AllDataTrue[1] && AllDataTrue[2] && AllDataTrue[3]) {
+    console.log("Status : Complete Data");
+    SendPHP(username, email, password);
+  } else {
+    AllDataTrue.forEach(function (currentValue) {
+      console.log("Status : " + currentValue);
+    });
+    console.log("Status : Incomplete Data");
+  }
 }
 
-function CheckRePassword(pass, repass, repassErr) {
+function CheckRePassword(passField, repassField, repassErr) {
+  let Check = true,
+    pass = passField.value,
+    repass = repassField.value;
+
   if (repass === "") {
     repassErr.style.visibility = "visible";
     repassErr.textContent = errMsg(3, 0);
+    Check = false;
   } else if (repass !== pass) {
     repassErr.style.visibility = "visible";
     repassErr.textContent = errMsg(3, 1);
-  } else {
-    setNormal("rp");
+    Check = false;
   }
+  if (Check) {
+    setNormalSwitch("rp", repassField);
+  } else {
+    setErrorInput("rp", repassField);
+  }
+  return Check;
 }
 
-function CheckPassword(pass, passErr) {
+function CheckPassword(passField, passErr) {
+  let Check = true,
+    pass = passField.value;
+
   if (pass === "") {
     passErr.style.visibility = "visible";
     passErr.textContent = errMsg(2, 0);
+    Check = false;
   } else if (String(pass).length < 8) {
     passErr.style.visibility = "visible";
     passErr.textContent = errMsg(2, 1);
+    Check = false;
   } else if (!pass.match(setOfPassValidate("u"))) {
     passErr.style.visibility = "visible";
     passErr.textContent = errMsg(2, 2);
+    Check = false;
   } else if (!pass.match(setOfPassValidate("l"))) {
     passErr.style.visibility = "visible";
     passErr.textContent = errMsg(2, 3);
+    Check = false;
   } else if (!pass.match(setOfPassValidate("n"))) {
     passErr.style.visibility = "visible";
     passErr.textContent = errMsg(2, 4);
-  } else {
-    setNormal("p");
+    Check = false;
   }
+  if (Check) {
+    setNormalSwitch("p", passField);
+  } else {
+    setErrorInput("p", passField);
+  }
+  return Check;
 }
 
 function setOfPassValidate(type) {
@@ -184,7 +231,7 @@ function CheckPasswordRules(pass) {
     lower = document.getElementById("lower"),
     number = document.getElementById("number");
 
-  if (String(pass).length > 8) {
+  if (String(pass).length >= 8) {
     setRuleTrueOrFalse("t", letter, 0);
   } else {
     setRuleTrueOrFalse("f", letter, 0);
@@ -240,7 +287,11 @@ function setRuleTrueOrFalse(func, rule, msg) {
 function errMsg(index1, index2) {
   let msg = [
     ["Username missing! Let's fix that.", "This Username is already in use!"],
-    ["Email missing! Let's fix that.", "This Email is already in use!"],
+    [
+      "Email missing! Let's fix that.",
+      "This Email is already in use!",
+      "Invalid email format.",
+    ],
     [
       "Password missing! Let's fix that.",
       "Password must be more than 8 letters.",
@@ -256,7 +307,7 @@ function errMsg(index1, index2) {
   return msg[index1][index2];
 }
 
-function setErrorInput(func) {
+function setErrorInput(func, inputStyle) {
   var errorSet = [
     document.getElementById("erroruser"),
     document.getElementById("erroremail"),
@@ -265,19 +316,23 @@ function setErrorInput(func) {
   ];
   switch (func) {
     case "u": {
-      setError(errorSet[0], errMsg(0, 0));
+      setError(errorSet[0], errMsg(0, 0), inputStyle);
       break;
     }
     case "e": {
-      setError(errorSet[1], errMsg(1, 0));
+      setError(errorSet[1], errMsg(1, 0), inputStyle);
+      break;
+    }
+    case "ef": {
+      setError(errorSet[1], errMsg(1, 2), inputStyle);
       break;
     }
     case "p": {
-      setError(errorSet[2], errMsg(2, 0));
+      setError(errorSet[2], errMsg(2, 0), inputStyle);
       break;
     }
     case "rp": {
-      setError(errorSet[3], errMsg(3, 0));
+      setError(errorSet[3], errMsg(3, 0), inputStyle);
       break;
     }
     default: {
@@ -287,12 +342,15 @@ function setErrorInput(func) {
   }
 }
 
-function setError(err, msg) {
+function setError(err, msg, inputStyle) {
   err.style.visibility = "visible";
   err.textContent = msg;
+  inputStyle.style.backgroundColor = "#ff9999";
+  inputStyle.style.borderColor = "#cf1919";
+  inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
 }
 
-function setNormal(func) {
+function setNormalSwitch(func, inputStyle) {
   var errorSet = [
     document.getElementById("erroruser"),
     document.getElementById("erroremail"),
@@ -301,34 +359,41 @@ function setNormal(func) {
   ];
   switch (func) {
     case "u": {
-      errorSet[0].style.visibility = "hidden";
+      setNormal(errorSet[0], inputStyle);
       break;
     }
     case "e": {
-      errorSet[1].style.visibility = "hidden";
+      setNormal(errorSet[1], inputStyle);
       break;
     }
     case "p": {
-      errorSet[2].style.visibility = "hidden";
+      setNormal(errorSet[2], inputStyle);
       break;
     }
     case "rp": {
-      errorSet[3].style.visibility = "hidden";
+      setNormal(errorSet[3], inputStyle);
       break;
     }
     default: {
-      console.log("Invalid function in [SetNormal]");
+      console.log("Invalid function in [setNormalSwitch]");
       break;
     }
   }
 }
 
-function SendPHP(username, email, password) {
+function setNormal(err, inputStyle) {
+  err.style.visibility = "hidden";
+  inputStyle.style.backgroundColor = "";
+  inputStyle.style.borderColor = "";
+  inputStyle.style.setProperty("--placeholder-color", "");
+}
+
+async function SendPHP(username, email, password) {
   // Create a FormData object to send the data
   const formData = new FormData();
   formData.append("action", "InsertData");
-  formData.append("username", username);
-  formData.append("email", email);
+  formData.append("username", username.value);
+  formData.append("email", String(email.value).toLowerCase());
   formData.append("password", password);
 
   // If all validation passes, you can send the data to PHP using AJAX
@@ -337,7 +402,10 @@ function SendPHP(username, email, password) {
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       // Handle the response from PHP
-      alert(xhr.responseText);
+      console.log(xhr.responseText);
+
+      // If data insertion is successful, you can redirect to a specific page
+      window.location.href = "../Pages/LoginPage.html";
     }
   };
 
