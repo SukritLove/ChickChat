@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     passwordInput = document.getElementById("password"),
     passwordRe = document.getElementById("re-pass"),
     passwordRules = document.getElementById("password-rules");
+
   passwordInput.addEventListener("focus", () => {
     passwordRules.style.display = "block";
   });
@@ -19,19 +20,29 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  username.addEventListener("input", () => {
+  username.addEventListener("input", async () => {
+    let usernameCheck = await checkUsernameAndEmail(
+      "username",
+      username,
+      getErrorSet(0),
+      "u"
+    );
     if (username.value.length === 0) {
       setErrorInput("u", username);
-    } else {
+    } else if (usernameCheck) {
       setNormalSwitch("u", username);
     }
   });
-  email.addEventListener("input", () => {
+  email.addEventListener("input", async () => {
+    let emailCheck = await checkUsernameAndEmail(
+      "email",
+      email,
+      getErrorSet(1),
+      "e"
+    );
     if (email.value.length === 0) {
       setErrorInput("e", email);
-    } else if (!checkEmailFormat(email.value)) {
-      setErrorInput("ef", email);
-    } else {
+    } else if (emailCheck) {
       setNormalSwitch("e", email);
     }
   });
@@ -40,6 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (passwordInput.value.length === 0) {
       CheckPasswordRules(passwordInput.value);
       setErrorInput("p", passwordInput);
+    } else if (checkSpace(passwordInput.value)) {
+      CheckPasswordRules(passwordInput.value);
+      setErrorInput("ps", passwordInput);
     } else {
       passwordRules.style.display = "block";
       CheckPasswordRules(passwordInput.value);
@@ -90,27 +104,57 @@ function checkEmailFormat(email) {
   let domainName = ["outlook.com", "gmail.com", "hotmail.com"];
   return domainName.includes(String(email).toLowerCase().split("@")[1]);
 }
+function checkSpace(data) {
+  var spaceRegex = /\s/;
+  return spaceRegex.test(data);
+}
+function checkExtraCharacter(data) {
+  var validCharactersRegex = /^[a-zA-Z0-9_.@-]+$/;
+  return validCharactersRegex.test(data);
+}
 
-async function checkUsernameAndEmail(column, dataField, errorSet, func) {
+async function checkUsernameAndEmail(column, dataField, getErrorSet, func) {
   let Check = true,
-    data = dataField.value;
+    CheckEm = true;
+  data = dataField.value;
+
   const isDataValid = await checkDataValid(column, data);
-  if (data === "") {
-    errorSet.style.visibility = "visible";
-    errorSet.textContent = column === "username" ? errMsg(0, 0) : errMsg(1, 0);
+  if (data === "" || data.trim() === "") {
+    getErrorSet.style.visibility = "visible";
+    getErrorSet.textContent =
+      column === "username" ? getMessage(0, 0) : getMessage(1, 0);
+    Check = false;
+  } else if (checkSpace(data)) {
+    getErrorSet.style.visibility = "visible";
+    getErrorSet.textContent =
+      column === "username" ? getMessage(0, 2) : getMessage(1, 3);
     Check = false;
   } else if (isDataValid) {
-    errorSet.style.visibility = "visible";
-    errorSet.textContent = column === "username" ? errMsg(0, 1) : errMsg(1, 1);
+    getErrorSet.style.visibility = "visible";
+    getErrorSet.textContent =
+      column === "username" ? getMessage(0, 1) : getMessage(1, 1);
     Check = false;
-  } else if (column === "email") {
-    Check = checkEmailFormat(email.value);
+  }
+  if (column === "email") {
+    if (!checkEmailFormat(data)) {
+      getErrorSet.style.visibility = "visible";
+      getErrorSet.textContent = getMessage(1, 2);
+      Check = false;
+    }
+    console.log("Status : " + !checkExtraCharacter(data));
+    if (!checkExtraCharacter(data)) {
+      getErrorSet.style.visibility = "visible";
+      getErrorSet.textContent = getMessage(1, 4);
+      Check = false;
+    }
   }
 
   if (Check) {
     setNormalSwitch(func, dataField);
+  } else if (column === "email") {
+    setErrorInput("e", dataField, "s");
   } else {
-    setErrorInput(func, dataField);
+    setErrorInput("u", dataField, "s");
   }
 
   return Check;
@@ -123,18 +167,11 @@ async function validateData() {
     password = document.getElementById("password"),
     rePassword = document.getElementById("re-pass");
 
-  const errorSet = [
-    document.getElementById("erroruser"),
-    document.getElementById("erroremail"),
-    document.getElementById("errorpass"),
-    document.getElementById("errorrepass"),
-  ];
-
   let AllDataTrue = [
-    await checkUsernameAndEmail("username", username, errorSet[0], "u"),
-    await checkUsernameAndEmail("email", email, errorSet[1], "e"),
-    CheckPassword(password, errorSet[2]),
-    CheckRePassword(password, rePassword, errorSet[3]),
+    await checkUsernameAndEmail("username", username, getErrorSet(0), "u"),
+    await checkUsernameAndEmail("email", email, getErrorSet(1), "e"),
+    CheckPassword(password, getErrorSet(2)),
+    CheckRePassword(password, rePassword, getErrorSet(3)),
   ];
 
   if (AllDataTrue[0] && AllDataTrue[1] && AllDataTrue[2] && AllDataTrue[3]) {
@@ -155,17 +192,17 @@ function CheckRePassword(passField, repassField, repassErr) {
 
   if (repass === "") {
     repassErr.style.visibility = "visible";
-    repassErr.textContent = errMsg(3, 0);
+    repassErr.textContent = getMessage(3, 0);
     Check = false;
   } else if (repass !== pass) {
     repassErr.style.visibility = "visible";
-    repassErr.textContent = errMsg(3, 1);
+    repassErr.textContent = getMessage(3, 1);
     Check = false;
   }
   if (Check) {
     setNormalSwitch("rp", repassField);
   } else {
-    setErrorInput("rp", repassField);
+    setErrorInput("rp", repassField, "s");
   }
   return Check;
 }
@@ -176,29 +213,33 @@ function CheckPassword(passField, passErr) {
 
   if (pass === "") {
     passErr.style.visibility = "visible";
-    passErr.textContent = errMsg(2, 0);
-    Check = false;
-  } else if (String(pass).length < 8) {
-    passErr.style.visibility = "visible";
-    passErr.textContent = errMsg(2, 1);
+    passErr.textContent = getMessage(2, 0);
     Check = false;
   } else if (!pass.match(setOfPassValidate("u"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = errMsg(2, 2);
+    passErr.textContent = getMessage(2, 2);
     Check = false;
   } else if (!pass.match(setOfPassValidate("l"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = errMsg(2, 3);
+    passErr.textContent = getMessage(2, 3);
     Check = false;
   } else if (!pass.match(setOfPassValidate("n"))) {
     passErr.style.visibility = "visible";
-    passErr.textContent = errMsg(2, 4);
+    passErr.textContent = getMessage(2, 4);
+    Check = false;
+  } else if (String(pass).length < 8) {
+    passErr.style.visibility = "visible";
+    passErr.textContent = getMessage(2, 1);
+    Check = false;
+  } else if (checkSpace(pass)) {
+    passErr.style.visibility = "visible";
+    passErr.textContent = getMessage(2, 5);
     Check = false;
   }
   if (Check) {
     setNormalSwitch("p", passField);
   } else {
-    setErrorInput("p", passField);
+    setErrorInput("p", passField, "s");
   }
   return Check;
 }
@@ -284,13 +325,19 @@ function setRuleTrueOrFalse(func, rule, msg) {
   }
 }
 
-function errMsg(index1, index2) {
+function getMessage(index1, index2) {
   let msg = [
-    ["Username missing! Let's fix that.", "This Username is already in use!"],
+    [
+      "Username missing! Let's fix that.",
+      "This Username is already in use!",
+      "The Username cannot contain space.",
+    ],
     [
       "Email missing! Let's fix that.",
       "This Email is already in use!",
       "Invalid email format.",
+      "The Email cannot contain Space.",
+      "The Email cannot contain Extra Character.",
     ],
     [
       "Password missing! Let's fix that.",
@@ -298,6 +345,7 @@ function errMsg(index1, index2) {
       "Password must contain uppercase letter",
       "Password must contain lowercase letter",
       "Password must contain number",
+      "The Password cannot contain space.",
     ],
     [
       "Re-enter Password missing! Let's fix that.",
@@ -306,72 +354,96 @@ function errMsg(index1, index2) {
   ];
   return msg[index1][index2];
 }
-
-function setErrorInput(func, inputStyle) {
+function getErrorSet(index) {
   var errorSet = [
     document.getElementById("erroruser"),
     document.getElementById("erroremail"),
     document.getElementById("errorpass"),
     document.getElementById("errorrepass"),
   ];
+  return errorSet[index];
+}
+
+function setErrorInput(func, inputStyle, func2) {
   switch (func) {
     case "u": {
-      setError(errorSet[0], errMsg(0, 0), inputStyle);
+      setError(getErrorSet(0), getMessage(0, 0), inputStyle, func2);
+      break;
+    }
+    case "us": {
+      setError(getErrorSet(0), getMessage(0, 2), inputStyle, func2);
       break;
     }
     case "e": {
-      setError(errorSet[1], errMsg(1, 0), inputStyle);
+      setError(getErrorSet(1), getMessage(1, 0), inputStyle, func2);
       break;
     }
     case "ef": {
-      setError(errorSet[1], errMsg(1, 2), inputStyle);
+      setError(getErrorSet(1), getMessage(1, 2), inputStyle, func2);
+      break;
+    }
+    case "es": {
+      setError(getErrorSet(1), getMessage(1, 3), inputStyle, func2);
+      break;
+    }
+    case "ex": {
+      setError(getErrorSet(1), getMessage(1, 4), inputStyle, func2);
       break;
     }
     case "p": {
-      setError(errorSet[2], errMsg(2, 0), inputStyle);
+      setError(getErrorSet(2), getMessage(2, 0), inputStyle, func2);
+      break;
+    }
+    case "ps": {
+      setError(getErrorSet(2), getMessage(2, 5), inputStyle, func2);
       break;
     }
     case "rp": {
-      setError(errorSet[3], errMsg(3, 0), inputStyle);
+      setError(getErrorSet(3), getMessage(3, 0), inputStyle, func2);
       break;
     }
     default: {
-      console.log("Invalid function in [setErrInput]");
+      console.log("Invalid function in [setErrInput]", func2);
       break;
     }
   }
 }
 
-function setError(err, msg, inputStyle) {
-  err.style.visibility = "visible";
-  err.textContent = msg;
-  inputStyle.style.backgroundColor = "#ff9999";
-  inputStyle.style.borderColor = "#cf1919";
-  inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
+function setError(err, msg, inputStyle, func) {
+  switch (func) {
+    case "s": {
+      inputStyle.style.backgroundColor = "#ff9999";
+      inputStyle.style.borderColor = "#cf1919";
+      inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
+      break;
+    }
+    default: {
+      err.style.visibility = "visible";
+      err.textContent = msg;
+      inputStyle.style.backgroundColor = "#ff9999";
+      inputStyle.style.borderColor = "#cf1919";
+      inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
+      break;
+    }
+  }
 }
 
 function setNormalSwitch(func, inputStyle) {
-  var errorSet = [
-    document.getElementById("erroruser"),
-    document.getElementById("erroremail"),
-    document.getElementById("errorpass"),
-    document.getElementById("errorrepass"),
-  ];
   switch (func) {
     case "u": {
-      setNormal(errorSet[0], inputStyle);
+      setNormal(getErrorSet(0), inputStyle);
       break;
     }
     case "e": {
-      setNormal(errorSet[1], inputStyle);
+      setNormal(getErrorSet(1), inputStyle);
       break;
     }
     case "p": {
-      setNormal(errorSet[2], inputStyle);
+      setNormal(getErrorSet(2), inputStyle);
       break;
     }
     case "rp": {
-      setNormal(errorSet[3], inputStyle);
+      setNormal(getErrorSet(3), inputStyle);
       break;
     }
     default: {

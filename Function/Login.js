@@ -1,5 +1,5 @@
 function checkInput(input) {
-  if (input.value === null || input.value.trim() === "") {
+  if (input.value === "" || input.value.trim() === "") {
     return false;
   } else {
     return true;

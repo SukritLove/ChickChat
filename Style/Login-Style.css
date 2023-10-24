@@ -77,12 +77,12 @@ input:focus::placeholder {
   color: var(--placeholder-color, black);
 }
 
-.erroruser {
+#erroruser {
   margin: 0px 0px 15px 0px;
   visibility: hidden;
 }
 
-.errorpass {
+#errorpass {
   margin: 0px 0px 25px 0px;
   visibility: hidden;
 }
