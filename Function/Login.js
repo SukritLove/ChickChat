@@ -187,7 +187,7 @@ async function login() {
         const response = JSON.parse(xhr.responseText);
         if (response.success) {
           console.log("Login successful.");
-          window.location.href = "../Pages/HomePage.html";
+          window.location.href = "../Pages/UserPage.html";
         } else {
           console.log("Login failed. Invalid username or password.");
           resolve(false);

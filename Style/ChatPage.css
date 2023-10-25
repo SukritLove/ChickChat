@@ -31,8 +31,9 @@ body {
   color: black;
 }
 
-.container {
-  display: grid;
+
+.container{
+    display: grid;
   grid-template-columns: 25% 75%;
   grid-template-rows: 100%;
   margin: 0 auto;
@@ -42,37 +43,38 @@ body {
 }
 
 .friendlist {
-  background-color: rgb(85, 149, 160);
-  grid-column: 1/1;
-  grid-row: 1/2;
-}
-.friendlistnav {
-  background-color: rgb(56, 76, 80);
-  display: flex;
-  flex-direction: column;
-}
-
-.logoChat {
-  color: white;
-  font-size: 30px;
-  margin: 10px;
-  font-family: cheeseBurger;
-}
-
-
-
-.searchBox{
-    width: 100%;
-    height: 30px;
-    border-radius: 10px;
-    margin-right: 10px;
-}
-.searchBtn{
-    width: 30%;
-    border-radius: 10px;
-}
-
-.chat {
-  background-color: rgb(68, 68, 116);
-  grid-column: 2;
-}
+    background-color: rgb(85, 149, 160);
+    grid-column: 1/1;
+    grid-row: 1/2;
+  }
+  .friendlistnav {
+    background-color: rgb(56, 76, 80);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logoChat {
+    color: white;
+    font-size: 30px;
+    margin: 10px;
+    font-family: cheeseBurger;
+  }
+  
+  
+  
+  .searchBox{
+      width: 100%;
+      height: 30px;
+      border-radius: 10px;
+      margin-right: 10px;
+  }
+  .searchBtn{
+      width: 30%;
+      border-radius: 10px;
+  }
+  
+  .chat {
+    background-color: rgb(68, 68, 116);
+    grid-column: 2;
+  }
+  
