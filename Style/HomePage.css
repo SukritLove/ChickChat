@@ -1,0 +1,78 @@
+@font-face {
+  font-family: cheeseBurger;
+  src: url("../Font/Cheese\ Burger.otf");
+}
+@font-face {
+  font-family: may;
+  src: url("../Font/KanchaMay.ttf");
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+.navbar {
+  background-color: #333;
+  overflow: hidden;
+}
+
+.navbar a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 25% 75%;
+  grid-template-rows: 100%;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.friendlist {
+  background-color: rgb(85, 149, 160);
+  grid-column: 1/1;
+  grid-row: 1/2;
+}
+.friendlistnav {
+  background-color: rgb(56, 76, 80);
+  display: flex;
+  flex-direction: column;
+}
+
+.logoChat {
+  color: white;
+  font-size: 30px;
+  margin: 10px;
+  font-family: cheeseBurger;
+}
+
+
+
+.searchBox{
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+.searchBtn{
+    width: 30%;
+    border-radius: 10px;
+}
+
+.chat {
+  background-color: rgb(68, 68, 116);
+  grid-column: 2;
+}
