@@ -412,7 +412,7 @@ function setErrorInput(func, inputStyle, func2) {
 function setError(err, msg, inputStyle, func) {
   switch (func) {
     case "s": {
-      inputStyle.style.backgroundColor = "#ff9999";
+      inputStyle.style.backgroundColor = "#ffe3e3";
       inputStyle.style.borderColor = "#cf1919";
       inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
       break;
@@ -420,7 +420,7 @@ function setError(err, msg, inputStyle, func) {
     default: {
       err.style.visibility = "visible";
       err.textContent = msg;
-      inputStyle.style.backgroundColor = "#ff9999";
+      inputStyle.style.backgroundColor = "#ffe3e3";
       inputStyle.style.borderColor = "#cf1919";
       inputStyle.style.setProperty("--placeholder-color", "var(--wrong-Text)");
       break;
@@ -466,7 +466,7 @@ async function SendPHP(username, email, password) {
   formData.append("action", "InsertData");
   formData.append("username", username.value);
   formData.append("email", String(email.value).toLowerCase());
-  formData.append("password", password);
+  formData.append("password", password.value);
 
   // If all validation passes, you can send the data to PHP using AJAX
   const xhr = new XMLHttpRequest();

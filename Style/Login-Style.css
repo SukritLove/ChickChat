@@ -63,27 +63,43 @@ footer {
   outline: none;
 }
 
-input:focus,
-input:hover {
+.username:focus,
+.username:hover,
+.password:focus,
+.password:hover {
   background-color: var(--yellow);
 }
-input:focus {
+.username:focus,
+.password:focus {
   border: 2px solid var(--darkyellow);
 }
 
-input:focus::placeholder {
+.username:focus::placeholder,
+.password:focus::placeholder {
   font-family: may;
   font-weight: 600;
   color: var(--placeholder-color, black);
 }
 
+span {
+  background-color: var(--wrong-Text);
+  border-radius: 5px;
+  padding: 2px;
+  color: white;
+  font-family: may;
+  font-weight: 600;
+  font-size: 12px;
+  visibility: hidden;
+}
+
 #erroruser {
-  margin: 0px 0px 15px 0px;
+  margin: 5px 5px 15px 5px;
   visibility: hidden;
 }
 
 #errorpass {
-  margin: 0px 0px 25px 0px;
+  margin: 5px 5px 25px 5px;
+
   visibility: hidden;
 }
 
@@ -135,4 +151,20 @@ header-2,
 .username::placeholder,
 .password::placeholder {
   transition-duration: 0.4s;
+}
+.passInput {
+  padding: 0px;
+  margin: 0px;
+  display: flex;
+}
+
+
+#shBtn1 {
+  position: relative;
+  border-radius: 7px;
+  justify-content: center;
+  margin-left: -45px;
+  border: 0px;
+  background-color: transparent;
+  transition: 1s;
 }
