@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../Style/ChatPage.css">
     <link rel="stylesheet" href="../Style/NavbarStyle.css">
     <link rel="stylesheet" href="../Style/color.css">
-    <script src="../Function/ChatPage.js"></script>
+    <script type="module" src="../Function/ChatPage.js"></script>
     <title>Home-Chick-Chat</title>
 </head>
 
@@ -16,10 +16,9 @@
     <body>
 
         <div class="navbar">
-            <a href="./UserPage.html">User</a>
-            <a href="./FriendsPage.html">Friends</a>
-            <a href="./FriendRequests.html">Friend Requests</a>
-            <a href="./ChatPage.html">Chat</a>
+            <a id="User" href="./UserPage.html">User</a>
+            <a id="FriendRequests" href="./FriendRequests.html">Friend Requests</a>
+            <a id="Chat" href="./ChatPage.html">Chat</a>
         </div>
 
         <div class="container">
@@ -32,10 +31,14 @@
                         <input class="searchBox" id="searchBox" placeholder="Search Chat">
                         <button class="searchBtn" id="searchBtn">Search</button>
                     </div>
+                </div>
+                <div>
 
                 </div>
             </div>
-            <div class="chat"></div>
+            <div class="chat">
+                <p id="greetingUser">Hello</p>
+            </div>
         </div>
         <!-- Your page content goes here -->
 

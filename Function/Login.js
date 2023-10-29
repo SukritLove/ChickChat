@@ -125,13 +125,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     let Search = [validateInput("u"), validateInput("p")];
     if (Search[0] && Search[1]) {
       let loginCheck = await login();
-      console.log(loginCheck);
-      if (!loginCheck) {
+
+      console.log(loginCheck.success);
+      if (loginCheck.success) {
+        sessionStorage.setItem("user_id", loginCheck.userId);
+        window.location.href = "../Pages/UserPage.html";
+      } else {
         setError(username, errUser, getErrMsg(2, 0));
         setError(password, errPass, getErrMsg(2, 0));
-      } else {
-        setNormal(username, errUser);
-        setNormal(password, errPass);
       }
     }
   });
@@ -187,7 +188,7 @@ async function login() {
         const response = JSON.parse(xhr.responseText);
         if (response.success) {
           console.log("Login successful.");
-          window.location.href = "../Pages/UserPage.html";
+          resolve({ success: true, userId: response.user_id });
         } else {
           console.log("Login failed. Invalid username or password.");
           resolve(false);
@@ -195,7 +196,6 @@ async function login() {
       }
     };
 
-    // Send the username and password as plain text to the server
     xhr.send("username=" + username + "&password=" + password);
   });
 }

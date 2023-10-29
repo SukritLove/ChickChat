@@ -1,0 +1,17 @@
+#friendlist {
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Horizontally center the text */
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  border-radius: 30px;
+  background: #e0e0e0;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+  margin: 0px 20px 20px 20px;
+}
