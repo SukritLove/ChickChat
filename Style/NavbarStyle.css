@@ -1,3 +1,12 @@
+@font-face {
+  font-family: cheeseBurger;
+  src: url("../Font/Cheese\ Burger.otf");
+}
+@font-face {
+  font-family: may;
+  src: url("../Font/KanchaMay.ttf");
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -6,9 +15,12 @@ body {
   .navbar {
     background-color: #333;
     overflow: hidden;
+
+    width: 100%;
   }
   
   .navbar a {
+    font-family: may;
     float: left;
     display: block;
     color: white;

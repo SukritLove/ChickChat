@@ -1,3 +1,5 @@
+import { addLog } from "./PushData.js";
+
 function checkInputNull(input) {
   if (input === "" || input.trim() === "") {
     return false;
@@ -14,14 +16,15 @@ function checkSpace(data) {
 function validateInput(func) {
   var username = document.getElementById("username"),
     password = document.getElementById("password");
-
   var erroruser = document.getElementById("erroruser"),
     errorpass = document.getElementById("errorpass");
-  (isValidUser = checkInputNull(username.value)),
-    (isValidPass = checkInputNull(password.value)),
-    (conSpaceUser = checkSpace(username.value)),
-    (conSpacePass = checkSpace(password.value));
+  var isValidUser = checkInputNull(username.value),
+    isValidPass = checkInputNull(password.value),
+    conSpaceUser = checkSpace(username.value),
+    conSpacePass = checkSpace(password.value);
+
   let checkAndSet = true;
+
   switch (func) {
     case "u": {
       checkAndSet = setStyle(
@@ -128,8 +131,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       console.log(loginCheck.success);
       if (loginCheck.success) {
-        sessionStorage.setItem("user_id", loginCheck.userId);
-        window.location.href = "../Pages/UserPage.html";
+        let status = await addLog("Login");
+        if (status) {
+          sessionStorage.setItem("user_id", loginCheck.userId);
+          window.location.href = "../Pages/UserPage.html";
+        }
       } else {
         setError(username, errUser, getErrMsg(2, 0));
         setError(password, errPass, getErrMsg(2, 0));
