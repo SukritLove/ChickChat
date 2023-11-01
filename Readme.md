@@ -14,5 +14,5 @@
 ##Job Percentage
 - Log In 99%
 - Register 99%
-- Friend System 30%
+- Friend System 35%
 - Chatting 2%

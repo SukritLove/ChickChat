@@ -131,11 +131,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       console.log(loginCheck.success);
       if (loginCheck.success) {
-        let status = await addLog("Login");
-        if (status) {
-          sessionStorage.setItem("user_id", loginCheck.userId);
-          window.location.href = "../Pages/UserPage.html";
-        }
+        sessionStorage.setItem("user_id", loginCheck.userId);
+        window.location.href = "../Pages/UserPage.html";
       } else {
         setError(username, errUser, getErrMsg(2, 0));
         setError(password, errPass, getErrMsg(2, 0));

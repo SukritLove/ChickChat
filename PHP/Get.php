@@ -155,7 +155,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $response = getFriend();
     } else if ($action === "getFriendAdded") {
         $userIds = getFriendAdded($userId);
-        $response = getUsernamesByIDs($userIds);
+
+        if (empty($userIds)) {
+            $response = false;
+        }else{
+
+            $response = getUsernamesByIDs($userIds);
+        }
     } 
     else if ($action === "getUserID") {
         $usernameToID = $_POST['username'];

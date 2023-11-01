@@ -69,7 +69,7 @@ async function getAdd(method) {
         if (response) {
           resolve(response);
         } else {
-          resolve([0]);
+          resolve(false);
         }
       }
     };
